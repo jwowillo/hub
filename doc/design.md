@@ -8,9 +8,8 @@
   location, read the directory from it, inject the directory into the embedded
   template, and serve the HTML page. (1, 4)
     - The config file will be a YAML file with the structure in 'Config'. (3)
-    - The URL for each item will be used to show an iframe corresponding to the
-      websites thumbnail. The name for each item will be shown under the
-      thumbnail. (2)
+    - The directory will be injected into a list which shows each websites name
+      with a link to the website. (2)
 
 ## Config
 
