@@ -12,6 +12,9 @@
 
 `hub --port 80`
 
+Make sure a file named 'config.yaml' is in the working-directory that matches
+the format below. This file can be udpated while `hub` is running.
+
 ## Example Config
 
 ```
@@ -19,4 +22,5 @@
   name: github
 - URL: https://reddit.com/r/programming
   name: programming reddit
+  ...
 ```
