@@ -1,3 +1,26 @@
 # `hub`
 
 `hub` is a configurable website directory.
+
+## Install
+
+`go get github.com/jwowillo/hub/cmd/hub`
+
+## Run
+
+`hub`
+
+`hub --port 80`
+
+Make sure a file named 'config.yaml' is in the working-directory that matches
+the format below. This file can be udpated while `hub` is running.
+
+## Example Config
+
+```
+- URL: https://github.com
+  name: github
+- URL: https://reddit.com/r/programming
+  name: programming reddit
+  ...
+```
