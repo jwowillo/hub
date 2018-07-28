@@ -8,14 +8,36 @@ import (
 	"strconv"
 )
 
-// handler serves nothing.
-func handler(w http.ResponseWriter, r *http.Request) {
+// Tmpl to inject website directory into.
+const Tmpl = `<!doctype html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>hub</title>
+</head>
+
+<body>
+  <ul>
+    {{ range . }}
+    <li>
+      <a href="{{ .URL }}" target="_blank">{{ .Name }}</a>
+    </li>
+    {{ end }}
+  </ul>
+</body>
+
+</html>`
+
+// Handler serves nothing.
+func Handler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprint(w, "")
 }
 
 // main starts server which serves nothing on the set port.
 func main() {
-	http.HandleFunc("/", handler)
+	http.HandleFunc("/", Handler)
 	log.Printf("listening on :%d", *port)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(*port), nil))
 }
