@@ -11,5 +11,5 @@
 1. Link to a favicon if the website at the URL has one
 2. Include a copy-config script that accepts a remote host and path to copy the
    config to
-3. Include a deploy script that accepts a remote host, working-directory, and
+3. Include a deploy script that accepts a remote host, working directory, and
    port to start the website on
