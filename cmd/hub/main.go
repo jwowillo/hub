@@ -3,9 +3,12 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
 	"strconv"
+
+	"gopkg.in/yaml.v2"
 )
 
 // Tmpl to inject website directory into.
@@ -29,6 +32,25 @@ const Tmpl = `<!doctype html>
 </body>
 
 </html>`
+
+// Website in directory.
+type Website struct {
+	URL  string `yaml:"URL"`
+	Name string `yaml:"name"`
+}
+
+// ReadConfig at path into Websites.
+func ReadConfig(path string) ([]Website, error) {
+	bs, err := ioutil.ReadFile(path)
+	if err != nil {
+		return nil, err
+	}
+	var sites []Website
+	if err := yaml.Unmarshal(bs, &sites); err != nil {
+		return nil, err
+	}
+	return sites, nil
+}
 
 // Handler serves nothing.
 func Handler(w http.ResponseWriter, r *http.Request) {

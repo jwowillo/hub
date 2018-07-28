@@ -14,8 +14,7 @@
 ## Config
 
 ```
-directory:
-  - URL: <URL>
-    name: <NAME>
-  - ...
+- URL: <URL>
+name: <NAME>
+- ...
 ```
