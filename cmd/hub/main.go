@@ -2,7 +2,7 @@ package main
 
 import (
 	"flag"
-	"fmt"
+	"html/template"
 	"io/ioutil"
 	"log"
 	"net/http"
@@ -10,6 +10,9 @@ import (
 
 	"gopkg.in/yaml.v2"
 )
+
+// Path to config.
+const Path = "config.yaml"
 
 // Tmpl to inject website directory into.
 const Tmpl = `<!doctype html>
@@ -54,7 +57,19 @@ func ReadConfig(path string) ([]Website, error) {
 
 // Handler serves nothing.
 func Handler(w http.ResponseWriter, r *http.Request) {
-	fmt.Fprint(w, "")
+	tmpl, err := template.New("directory").Parse(Tmpl)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	ws, err := ReadConfig(Path)
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if err := tmpl.Execute(w, ws); err != nil {
+		log.Println(err)
+	}
 }
 
 // main starts server which serves nothing on the set port.
