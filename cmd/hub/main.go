@@ -6,7 +6,9 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
+	"regexp"
 	"strconv"
+	"sync"
 
 	"gopkg.in/yaml.v2"
 )
@@ -15,7 +17,7 @@ import (
 const Path = "config.yaml"
 
 // Tmpl to inject website directory into.
-const Tmpl = `<!doctype html>
+var Tmpl = template.Must(template.New("directory").Parse(`<!doctype html>
 
 <head>
   <meta charset="utf-8">
@@ -25,30 +27,69 @@ const Tmpl = `<!doctype html>
 </head>
 
 <body>
-  <ul>
+  <ul style="list-style-type: none; padding: 0;">
     {{ range . }}
-    <li>
-      <a href="{{ .URL }}" target="_blank">{{ .Name }}</a>
+    <li style="margin-bottom: 16px;">
+      <img src="{{ .Favicon }}" style="width: 32px; height: 32px;" />
+      <a href="{{ .URL }}" target="_blank" style="color: black; display: inline-table;">
+        <span style="font-size: 32px; padding-left: 16px; font-family: helvetica; display: table-cell; vertical-align: middle;">{{ .Name }}</span>
+      </a>
     </li>
     {{ end }}
   </ul>
 </body>
 
-</html>`
+</html>`))
+
+// FaviconRegex to match favicons with.
+var FaviconRegex = regexp.MustCompile("<.*rel=\".*icon.*\".*>")
+
+// URLRegex matches URLs.
+var URLRegex = regexp.MustCompile("href=\"(.*?)\"")
 
 // Website in directory.
 type Website struct {
-	URL  string `yaml:"URL"`
-	Name string `yaml:"name"`
+	URL     string `yaml:"URL"`
+	Name    string `yaml:"name"`
+	Favicon string
+}
+
+// LoadFavicon into the Website.
+//
+// Does nothing if the Website can't be reached or a favicon can't be found.
+func LoadFavicon(w *Website) {
+	resp, err := http.Get(w.URL)
+	if err != nil {
+		return
+	}
+	defer resp.Body.Close()
+	bs, err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		return
+	}
+	match := FaviconRegex.Find(bs)
+	if match == nil {
+		return
+	}
+	matches := URLRegex.FindAllSubmatch(match, 1)
+	if len(matches) == 0 {
+		return
+	}
+	match = matches[0][1]
+	if match[0] == '/' {
+		w.Favicon = w.URL + string(match)
+	} else {
+		w.Favicon = string(match)
+	}
 }
 
 // ReadConfig at path into Websites.
-func ReadConfig(path string) ([]Website, error) {
+func ReadConfig(path string) ([]*Website, error) {
 	bs, err := ioutil.ReadFile(path)
 	if err != nil {
 		return nil, err
 	}
-	var sites []Website
+	var sites []*Website
 	if err := yaml.Unmarshal(bs, &sites); err != nil {
 		return nil, err
 	}
@@ -57,17 +98,22 @@ func ReadConfig(path string) ([]Website, error) {
 
 // Handler serves nothing.
 func Handler(w http.ResponseWriter, r *http.Request) {
-	tmpl, err := template.New("directory").Parse(Tmpl)
-	if err != nil {
-		log.Println(err)
-		return
-	}
 	ws, err := ReadConfig(Path)
 	if err != nil {
 		log.Println(err)
 		return
 	}
-	if err := tmpl.Execute(w, ws); err != nil {
+	var wg sync.WaitGroup
+	wg.Add(len(ws))
+	for _, w := range ws {
+		x := w
+		go func() {
+			LoadFavicon(x)
+			wg.Done()
+		}()
+	}
+	wg.Wait()
+	if err := Tmpl.Execute(w, ws); err != nil {
 		log.Println(err)
 	}
 }

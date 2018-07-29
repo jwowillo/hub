@@ -27,7 +27,7 @@
   URL, and parse an image URL at a tag with `rel="icon"` if it exists into the
   `Website`. This will be called for each `Website` in `Handler`. The image will
   be injected to the right of each website link. (1)
-* A shell copy-config script will use `scp` to copy the config file to a passed
+* A shell copy config script will use `scp` to copy the config file to a passed
   remote host and directory. (2)
 * A shell deploy script will use `ssh` to log into a passed remote host and
   start `hub` with `nohup` in a passed working directory. (3)
