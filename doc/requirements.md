@@ -8,7 +8,8 @@
 5. Website should be as easy as possible to install and run
 
 # v1.1.0 Requirements
-1. Link to a favicon if the website at the URL has one
+1. Include a favicon if the website at the URL has one for each website in the
+   directory
 2. Include a copy-config script that accepts a remote host and path to copy the
    config to
 3. Include a deploy script that accepts a remote host, working directory, and
