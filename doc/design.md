@@ -1,7 +1,5 @@
 # v1.0.0 Design
 
-# TODO: Make complete sentences.
-
 * A `go` command with no arguments will serve a single home page with its
   template embedded in the binary.
     - `go get` will install the command. (5)
@@ -28,6 +26,6 @@
   `Website`. This will be called for each `Website` in `Handler`. The image will
   be injected to the right of each website link. (1)
 * A shell copy config script will use `scp` to copy the config file to a passed
-  remote host and directory. (2)
+  remote host, user, and directory. (2)
 * A shell deploy script will use `ssh` to log into a passed remote host and
   start `hub` with `nohup` in a passed working directory. (3)

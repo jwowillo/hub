@@ -1,0 +1,6 @@
+#!/usr/bin/env bash
+
+# copy_config copies the config.yaml file in the working directory to the passed
+# remote host, user, and directory.
+
+scp config.yaml $2@$1:$3

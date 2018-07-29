@@ -10,7 +10,7 @@
 # v1.1.0 Requirements
 1. Include a favicon if the website at the URL has one for each website in the
    directory
-2. Include a copy-config script that accepts a remote host and path to copy the
-   config to
+2. Include a copy-config script that accepts a remote host, user, and path to
+   copy the config to
 3. Include a deploy script that accepts a remote host, working directory, and
    port to start the website on
