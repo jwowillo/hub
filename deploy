@@ -1,0 +1,10 @@
+#!/usr/bin/env bash
+
+# deploy hub to the passed remote host, user, and directory
+
+ssh $2@$1 << EOF
+go get -u github.com/jwowillo/hub/cmd/hub
+sudo pkill hub
+cd $3
+sudo nohup hub --port 80 >/dev/null 2>/dev/null &
+EOF

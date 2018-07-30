@@ -12,5 +12,5 @@
    directory
 2. Include a copy-config script that accepts a remote host, user, and path to
    copy the config to
-3. Include a deploy script that accepts a remote host, working directory, and
-   port to start the website on
+3. Include a deploy script that accepts a remote host, user, and working
+   directory to start the website on

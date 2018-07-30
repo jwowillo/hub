@@ -22,6 +22,13 @@ the format below. This file can be udpated while `hub` is running.
 Make sure the config file is in the working directory. The script copies the
 file to the passed remote host, user, and directory.
 
+## Run `deploy`
+
+`deploy 127.0.0.1 user '~'`
+
+Make sure the config file is in the remote directory. The script deploys `hub`
+to the passed remote host, user, and directory.
+
 ## Example Config
 
 ```
