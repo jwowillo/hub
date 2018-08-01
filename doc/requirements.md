@@ -14,3 +14,16 @@
    copy the config to
 3. Include a deploy script that accepts a remote host, user, and working
    directory to start the website on
+
+# v2.0.0 Requirements
+
+1. Add a favicon.
+2. Add a header.
+3. Separate styles into a stylesheet.
+4. Separate the template into a file.
+4. Create a directory called 'static' that holds the favicon and styles.
+5. Create a directory called 'tmpl' that holds the template.
+4. Add a file server that serves files from the static directory.
+5. Cache favicons.
+6. Update static directory and template directory for minor-version changes
+   automatically.
