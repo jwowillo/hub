@@ -27,6 +27,10 @@ var Tmpl = template.Must(template.New("directory").Parse(`<!doctype html>
 </head>
 
 <body>
+  <header>
+    <h1 style="font-family: helvetica; font-size: 64px;">hub</h1>
+  </header>
+
   <ul style="list-style-type: none; padding: 0;">
     {{ range . }}
     <li style="margin-bottom: 16px;">
