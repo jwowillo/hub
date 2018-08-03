@@ -2,13 +2,13 @@
 
 * The favicon will be 1 black wire going into a hub with 3 wires leaving (1).
 * The header will be larger bold text that says 'hub' (2).
-* Styles will be refactored from the template into 'styles/styles.css' and be as
+* Styles will be refactored from the template into 'static/styles.css' and be as
   general as possible (3, 5).
 * The template will be moved into a file called 'tmpl/index.html' (4, 6).
 * `http.FileServer` will be used to serve static files (7).
 * A cache will be provided like in 'Cache'. The cache will be checked by the
   main handler before querying a favicon and updated after querying a favicon. A
-  separate thread will clear the cache every day (8).
+  separate process will clear the cache every day (8).
 * The major version will be embedded in the server. A separate process will
   check the Github release API for the most version in that major version every
   day. The release with that version will then be downloaded and extracted over
