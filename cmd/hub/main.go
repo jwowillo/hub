@@ -9,43 +9,19 @@ import (
 	"regexp"
 	"strconv"
 	"sync"
+	"time"
 
 	"gopkg.in/yaml.v2"
 )
 
+// CacheMutex is a read/write mutex for updating the template cache.
+var CacheMutex = sync.RWMutex{}
+
+// Cache to store read templates.
+var Cache = NewTmplCache()
+
 // Path to config.
 const Path = "config.yaml"
-
-// Tmpl to inject website directory into.
-var Tmpl = template.Must(template.New("directory").Parse(`<!doctype html>
-
-<head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-
-  <title>hub</title>
-
-  <link rel="stylesheet" href="/static/styles.css" />
-</head>
-
-<body>
-  <header>
-    <h1>hub</h1>
-  </header>
-
-  <ul>
-    {{ range . }}
-    <li>
-      <img src="{{ .Favicon }}" />
-      <a href="{{ .URL }}" target="_blank">
-        <span>{{ .Name }}</span>
-      </a>
-    </li>
-    {{ end }}
-  </ul>
-</body>
-
-</html>`))
 
 // FaviconRegex to match favicons with.
 var FaviconRegex = regexp.MustCompile("<.*rel=\".*icon.*\".*>")
@@ -119,13 +95,51 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 		}()
 	}
 	wg.Wait()
-	if err := Tmpl.Execute(w, ws); err != nil {
+	tmpl, err := ReadTmpl("tmpl/index.html")
+	if err != nil {
+		log.Println(err)
+		return
+	}
+	if err := tmpl.Execute(w, ws); err != nil {
 		log.Println(err)
 	}
 }
 
+// ReadTmpl using Cache at key.
+func ReadTmpl(key string) (*template.Template, error) {
+	CacheMutex.RLock()
+	cached, exists := Cache.Get("tmpl/index.html")
+	CacheMutex.RUnlock()
+	if !exists {
+		tmpl, err := template.ParseFiles("tmpl/index.html")
+		if err != nil {
+			return nil, err
+		}
+		CacheMutex.Lock()
+		Cache.Put("tmpl/index.html", tmpl)
+		CacheMutex.Unlock()
+		cached = tmpl
+	}
+	return cached, nil
+}
+
+// ClearCache every set time interval forever.
+func ClearCache() {
+	go func() {
+		for {
+			func() {
+				CacheMutex.Lock()
+				defer CacheMutex.Unlock()
+				Cache.Clear()
+			}()
+			time.Sleep(time.Duration(*cacheDuration) * time.Hour)
+		}
+	}()
+}
+
 // main starts server which serves nothing on the set port.
 func main() {
+	ClearCache()
 	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("static")))
 	http.Handle("/static/", fs)
 	http.HandleFunc("/", Handler)
@@ -140,3 +154,10 @@ func init() {
 
 // port to listen on.
 var port = flag.Int("port", 8080, "port to listen on")
+
+// cacheDuration before clearing cache.
+var cacheDuration = flag.Int(
+	"cache-duration",
+	24,
+	"hours before clearing cache",
+)
