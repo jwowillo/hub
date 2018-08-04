@@ -24,19 +24,21 @@ var Tmpl = template.Must(template.New("directory").Parse(`<!doctype html>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 
   <title>hub</title>
+
+  <link rel="stylesheet" href="/static/styles.css" />
 </head>
 
 <body>
   <header>
-    <h1 style="font-family: helvetica; font-size: 64px;">hub</h1>
+    <h1>hub</h1>
   </header>
 
-  <ul style="list-style-type: none; padding: 0;">
+  <ul>
     {{ range . }}
-    <li style="margin-bottom: 16px;">
-      <img src="{{ .Favicon }}" style="width: 32px; height: 32px;" />
-      <a href="{{ .URL }}" target="_blank" style="color: black; display: inline-table;">
-        <span style="font-size: 32px; padding-left: 16px; font-family: helvetica; display: table-cell; vertical-align: middle;">{{ .Name }}</span>
+    <li>
+      <img src="{{ .Favicon }}" />
+      <a href="{{ .URL }}" target="_blank">
+        <span>{{ .Name }}</span>
       </a>
     </li>
     {{ end }}
