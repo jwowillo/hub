@@ -124,6 +124,8 @@ func Handler(w http.ResponseWriter, r *http.Request) {
 
 // main starts server which serves nothing on the set port.
 func main() {
+	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("static")))
+	http.Handle("/static/", fs)
 	http.HandleFunc("/", Handler)
 	log.Printf("listening on :%d", *port)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(*port), nil))
