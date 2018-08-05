@@ -1,0 +1,14 @@
+#!/usr/bin/env bash
+
+# copy_assets in 'static' and 'tmpl' to passed remote host, user, and directory.
+
+ssh $2@$1 << EOF
+cd $3
+rm -rf hub
+git clone https://github.com/jwowillo/hub.git
+mkdir -p static
+mv hub/static/* static
+mkdir -p tmpl
+mv hub/tmpl/* tmpl
+rm -rf hub
+EOF

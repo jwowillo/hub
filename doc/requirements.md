@@ -1,3 +1,7 @@
+# v2.1.0 Requirements
+
+1. Add a copy assets script.
+
 # v2.0.0 Requirements
 
 1. Add a favicon

@@ -1,3 +1,8 @@
+# v2.1.0 Design
+
+* A copy assets shell script will copy 'static' and 'tmpl' to a passed remote
+  address, user, and directory (1).
+
 # v2.0.0 Design
 
 * The favicon will be 1 black wire going into a hub with 3 wires leaving (1).
