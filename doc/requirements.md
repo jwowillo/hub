@@ -8,8 +8,6 @@
 6. Create a directory called 'tmpl' that holds the template
 7. Add a file server that serves files from the static directory
 8. Cache favicons
-9. Update static directory and template directory for minor version changes
-   automatically
 
 # v1.1.0 Requirements
 1. Include a favicon if the website at the URL has one for each website in the
