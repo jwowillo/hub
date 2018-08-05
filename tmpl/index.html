@@ -1,0 +1,31 @@
+<!doctype html>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <title>hub</title>
+
+  <link rel="icon" href="/static/favicon.gif" />
+
+  <link rel="stylesheet" href="/static/styles.css" />
+</head>
+
+<body>
+  <header>
+    <h1>hub</h1>
+  </header>
+
+  <ul>
+    {{ range . }}
+    <li>
+      <img src="{{ .Favicon }}" />
+      <a href="{{ .URL }}" target="_blank">
+        <span>{{ .Name }}</span>
+      </a>
+    </li>
+    {{ end }}
+  </ul>
+</body>
+
+</html>

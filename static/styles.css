@@ -1,0 +1,32 @@
+h1 {
+  font-family: helvetica;
+  font-size: 3em;
+}
+
+ul {
+  list-style-type: none;
+  padding: 0;
+}
+
+li {
+  margin-bottom: 10px;
+}
+
+img {
+  width: 32px;
+  height: 32px;
+}
+
+a {
+  color: black;
+  display: inline-table;
+}
+
+span {
+  font-size: 1.5em;
+  padding-left: 10px;
+  font-family: helvetica;
+  display: table-cell;
+  vertical-align: middle;
+}
+
