@@ -10,10 +10,12 @@
 
 `hub`
 
-`hub --port 80`
+`hub ?--port 80 ?--cache-duration 24`
 
 Make sure a file named 'config.yaml' is in the working directory that matches
-the format below. This file can be udpated while `hub` is running.
+the format below. This file can be udpated while `hub` is running. The optional
+flag `--port` determines what port to listen on. The optional flag
+`--cache-duration` determines how frequently caches are cleared.
 
 ## Run `copy_config`
 

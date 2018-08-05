@@ -11,11 +11,6 @@
 * A cache like in 'Cache' will be checked by the main handler before querying a
   favicon and updated after querying a favicon. A separate process will clear
   the cache every day (8).
-* The major version will be embedded in the server. A separate process will
-  check the Github release API for the most version in that major version every
-  day. The release with that version will then be downloaded and extracted over
-  the static and template directory. The Github release API will be abstracted
-  behind an interface like in 'Release Manager' (9).
 
 ## Cache
 
@@ -24,26 +19,6 @@ type Cache struct:
 * Get(URL) (FaviconPath, bool)
 * Put(URL, FaviconPath)
 * Clear()
-```
-
-## Release Manager
-
-```
-type Version struct:
-* Major int
-* Minor int
-* Patch int
-```
-
-```
-type ReleaseManager interface:
-* MostRecentVersionWithMajor(Major) (Version, error)
-* Copy(Version, ReleaseDirectory, ToDirectory) error
-```
-
-```
-type GithubReleaseManager struct:
-* ReleaseManager
 ```
 
 # v1.1.0 Design
