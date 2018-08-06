@@ -24,6 +24,13 @@ flag `--port` determines what port to listen on. The optional flag
 Make sure the config file is in the working directory. The script copies the
 file to the passed remote host, user, and directory.
 
+## Run `copy_assets`
+
+`copy_assets 127.0.0.1 user '~'`
+
+The script copies the directories containing assets from the `hub` repo to the
+passed remote host, user, and directory.
+
 ## Run `deploy`
 
 `deploy 127.0.0.1 user '~'`
