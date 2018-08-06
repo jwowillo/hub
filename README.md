@@ -8,8 +8,6 @@
 
 ## Run `hub`
 
-`hub`
-
 `hub ?--port 80 ?--cache-duration 24`
 
 Make sure a file named 'config.yaml' is in the working directory that matches
