@@ -3,6 +3,8 @@ package main
 import (
 	"io/ioutil"
 	"net/http"
+	"net/url"
+	"strings"
 	"sync"
 )
 
@@ -36,7 +38,11 @@ func Favicon(w Website) string {
 	match = matches[0][1]
 	var favicon string
 	if match[0] == '/' {
-		favicon = w.URL + string(match)
+		u, err := url.Parse(w.URL)
+		if err != nil {
+			return ""
+		}
+		favicon = strings.TrimRight(w.URL, u.Path) + string(match)
 	} else {
 		favicon = string(match)
 	}
