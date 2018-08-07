@@ -1,4 +1,4 @@
-# v3.0.0
+# v3.0.0 Requirements
 
 1. Fix absolute path handling for favicons not at '/'
 2. Update text and background colors to match the favicon

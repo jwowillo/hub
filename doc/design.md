@@ -1,7 +1,74 @@
-# v2.1.1
+# v3.0.0 Design
 
 * The URL will be parsed and the path will be stripped of before appending
-  absolute favicon paths '/'.
+  absolute favicon paths '/' (1).
+* 'styles.css' will be updated so the page background matches the favicon
+  background and all text matches the favicon foreground (2).
+* All elements will be wrapped in a 'main' tag which will be centered using
+  flexbox (6).
+* A tested package called `cache` described in `cache` will be added (3, 4).
+* `FileCacheManager` and `TimeCacheManager` will be embedded in structs that
+  log the removing operations and inject a `FileChangedSource` that checks the
+  file on the file-system and a `SleepSource` which calls `time.Sleep`
+  (3, 4, 5).
+* Specific getters wrapping `cache.Get` will be provided for each of favicons,
+  the config, and the template.
+    - The `TimeCacheManager` will be accessed by the accessor for loading
+      favicons.
+    - The `FileCacheManager` will be accessed by the accessor for the config
+      (3).
+    - The `FileCacheManager` will be accessed by the accessor for the template
+      (4).
+* `CacheManager`s and `Cache`s will be wrapped into the main `http.HandlerFunc`
+  through a closure (3, 4).
+
+## `cache`
+
+```
+type Cache<T> struct:
+* Get(string) (T, bool)
+* Put(string, T)
+* Delete(string)
+* Clear()
+```
+
+```
+type CacheManager<T> interface:
+* Get(Cache<T>, string) (T, bool)
+* Put(Cache<T>, string, T)
+* Delete(Cache<T>, string)
+* Clear(Cache<T>)
+```
+
+```
+type Fallback<T> func(string) T
+```
+
+```
+func Get<T>(CacheManager<T>, Cache<T>, Fallback<T>) T
+```
+
+```
+type TimeSource interface:
+* Time() time.Time
+```
+
+```
+type TimeCacheManager<T> struct:
+* New(TimeSource)
+* CacheManager<T>
+```
+
+```
+type FileChangedSource interface:
+* FileChanged(string) bool
+```
+
+```
+type FileCacheManager<T> struct:
+* New(FileChangedSource)
+* CacheManager<T>
+```
 
 # v2.1.0 Design
 
