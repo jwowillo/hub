@@ -1,3 +1,8 @@
+# v2.1.1
+
+* The URL will be parsed and the path will be stripped of before appending
+  absolute favicon paths '/'.
+
 # v2.1.0 Design
 
 * A copy assets shell script will copy 'static' and 'tmpl' to a passed remote

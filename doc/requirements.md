@@ -1,3 +1,7 @@
+# v2.1.1
+
+1. Fix absolute path handling for favicons not at '/'.
+
 # v2.1.0 Requirements
 
 1. Add a copy assets script.
