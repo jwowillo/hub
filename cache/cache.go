@@ -1,3 +1,5 @@
+// Package cache provides an in-memory cache along with functionality to
+// decorate it with.
 package cache
 
 // Cache associates keys with values.
