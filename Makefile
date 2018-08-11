@@ -6,6 +6,7 @@ hub:
 
 doc:
 	@echo making doc
-	pandoc doc/requirements.md --latex-engine xelatex \
-		-o doc/requirements.pdf
-	pandoc doc/design.md --latex-engine xelatex -o doc/design.pdf
+	java -jar plantuml.jar doc/cache_uml.txt
+	cd doc; pandoc requirements.md --latex-engine xelatex \
+		-o requirements.pdf
+	cd doc; pandoc design.md --latex-engine xelatex -o design.pdf

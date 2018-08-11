@@ -6,69 +6,24 @@
   background and all text matches the favicon foreground (2).
 * All elements will be wrapped in a 'main' tag which will be centered using
   flexbox (6).
-* A tested package called `cache` described in `cache` will be added (3, 4).
-* `FileCacheManager` and `TimeCacheManager` will be embedded in structs that
-  log the removing operations and inject a `FileChangedSource` that checks the
-  file on the file-system and a `SleepSource` which calls `time.Sleep`
-  (3, 4, 5).
-* Specific getters wrapping `cache.Get` will be provided for each of favicons,
-  the config, and the template.
-    - The `TimeCacheManager` will be accessed by the accessor for loading
-      favicons.
-    - The `FileCacheManager` will be accessed by the accessor for the config
-      (3).
-    - The `FileCacheManager` will be accessed by the accessor for the template
-      (4).
-* `CacheManager`s and `Cache`s will be wrapped into the main `http.HandlerFunc`
-  through a closure (3, 4).
+* A tested package called `cache` will be added (3, 4).
+* Specific getters wrapping `cache.Getter` will be provided for each of
+  favicons, the config, and the template.
+    - A `cache.Cache` decorated with `cache.ThreadSafeDecorator`,
+      `cache.LogDecorator`, and `cache.TimeDecorator` will be accessed by the
+      getter for loading favicons.
+    - A `cache.Cache` decorated with `cache.ThreadSafeDecorator`,
+      `cache.LogDecorator`, and `cache.ModifiedDecorator` will be accessed by
+      the getter for the config (3).
+    - A `cache.Cache` decorated with `cache.ThreadSafeDecorator`,
+      `cache.LogDecorator`, and `cache.ModifiedDecorator` will be accessed by
+      the getter for the template (4).
+* `Cache`s will be injected into the main `http.HandlerFunc` through a
+  closure (3, 4).
 
 ## `cache`
 
-```
-type Cache<T> struct:
-* Get(string) (T, bool)
-* Put(string, T)
-* Delete(string)
-* Clear()
-```
-
-```
-type CacheManager<T> interface:
-* Get(Cache<T>, string) (T, bool)
-* Put(Cache<T>, string, T)
-* Delete(Cache<T>, string)
-* Clear(Cache<T>)
-```
-
-```
-type Fallback<T> func(string) T
-```
-
-```
-func Get<T>(CacheManager<T>, Cache<T>, Fallback<T>) T
-```
-
-```
-type TimeSource interface:
-* Time() time.Time
-```
-
-```
-type TimeCacheManager<T> struct:
-* New(TimeSource)
-* CacheManager<T>
-```
-
-```
-type FileChangedSource interface:
-* FileChanged(string) bool
-```
-
-```
-type FileCacheManager<T> struct:
-* New(FileChangedSource)
-* CacheManager<T>
-```
+![`cache` Design](cache_uml.png)
 
 # v2.1.0 Design
 
