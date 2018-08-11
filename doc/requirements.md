@@ -6,6 +6,7 @@
 4. Change the caching for the template so that its only reparsed when modified
 5. Log whenever cache items are removed
 6. Center containers on the website
+7. Don't show anything for favicon if link doesn't exist
 
 # v2.1.0 Requirements
 

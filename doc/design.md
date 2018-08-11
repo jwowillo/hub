@@ -11,15 +11,17 @@
   favicons, the config, and the template.
     - A `cache.Cache` decorated with `cache.ThreadSafeDecorator`,
       `cache.LogDecorator`, and `cache.TimeDecorator` will be accessed by the
-      getter for loading favicons.
+      getter for favicons.
     - A `cache.Cache` decorated with `cache.ThreadSafeDecorator`,
       `cache.LogDecorator`, and `cache.ModifiedDecorator` will be accessed by
-      the getter for the config (3).
+      the getter for websites from the config (3).
     - A `cache.Cache` decorated with `cache.ThreadSafeDecorator`,
       `cache.LogDecorator`, and `cache.ModifiedDecorator` will be accessed by
       the getter for the template (4).
 * `Cache`s will be injected into the main `http.HandlerFunc` through a
   closure (3, 4).
+* Wrap the favicon in the template with an if that only adds the favicon if it
+  isn't empty (7).
 
 ## `cache`
 
