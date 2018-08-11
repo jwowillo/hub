@@ -1,38 +1,32 @@
 package main
 
 import (
+	"errors"
 	"html/template"
-	"sync"
+
+	"github.com/jwowillo/hub/cache"
 )
 
-// TmplCacheMutex is a read/write mutex for updating the template cache.
-var TmplCacheMutex = sync.RWMutex{}
+// TemplateCache stores parsed template.Templates.
+type TemplateCache cache.Cache
 
-// TmplCache to store read templates.
-var TmplCache = NewTemplateCache()
-
-// ReadTmpl using TmplCache at key or falling back to executing the template if
-// it doesn't exist.
-func ReadTmpl(key string) (*template.Template, error) {
-	TmplCacheMutex.RLock()
-	cached, exists := TmplCache.Get("tmpl/index.html")
-	TmplCacheMutex.RUnlock()
-	if !exists {
-		tmpl, err := template.ParseFiles("tmpl/index.html")
-		if err != nil {
-			return nil, err
-		}
-		TmplCacheMutex.Lock()
-		TmplCache.Put("tmpl/index.html", tmpl)
-		TmplCacheMutex.Unlock()
-		cached = tmpl
+// GetTemplate from the TemplateCache or get a new one with Template if
+// necessary.
+func GetTemplate(c TemplateCache, path string) (*template.Template, error) {
+	tmpl := cache.Get(c, path, Template)
+	if tmpl == nil {
+		return nil, errors.New("couldn't parse template")
 	}
-	return cached, nil
+	return tmpl.(*template.Template), nil
 }
 
-// ClearTmplCache clears TmplCache.
-func ClearTmplCache() {
-	TmplCacheMutex.Lock()
-	defer TmplCacheMutex.Unlock()
-	TmplCache.Clear()
+// Template reads the template.Template at the path.
+//
+// Returns nil if the template.Template doesn't exist or couldn't be parsed.
+func Template(path string) interface{} {
+	tmpl, err := template.ParseFiles("tmpl/index.html")
+	if err != nil {
+		return nil
+	}
+	return tmpl
 }

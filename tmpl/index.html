@@ -12,20 +12,24 @@
 </head>
 
 <body>
-  <header>
-    <h1>hub</h1>
-  </header>
+  <main>
+    <header>
+      <h1>hub</h1>
+    </header>
 
-  <ul>
-    {{ range . }}
-    <li>
-      <img src="{{ .Favicon }}" />
-      <a href="{{ .URL }}" target="_blank">
-        <span>{{ .Name }}</span>
-      </a>
-    </li>
-    {{ end }}
-  </ul>
+    <ul>
+      {{ range . }}
+      <li>
+        {{ if .Favicon }}
+        <img src="{{ .Favicon }}" />
+        {{ end }}
+        <a href="{{ .URL }}" target="_blank">
+          <span>{{ .Name }}</span>
+        </a>
+      </li>
+      {{ end }}
+    </ul>
+  </main>
 </body>
 
 </html>

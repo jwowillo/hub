@@ -1,7 +1,31 @@
-# v2.1.1
+# v3.0.0 Design
 
 * The URL will be parsed and the path will be stripped of before appending
-  absolute favicon paths '/'.
+  absolute favicon paths '/' (1).
+* 'styles.css' will be updated so the page background matches the favicon
+  background and all text matches the favicon foreground (2).
+* All elements will be wrapped in a 'main' tag which will be centered using
+  flexbox (6).
+* A tested package called `cache` will be added (3, 4).
+* Specific getters wrapping `cache.Getter` will be provided for each of
+  favicons, the config, and the template.
+    - A `cache.Cache` decorated with `cache.ThreadSafeDecorator`,
+      `cache.LogDecorator`, and `cache.TimeDecorator` will be accessed by the
+      getter for favicons.
+    - A `cache.Cache` decorated with `cache.ThreadSafeDecorator`,
+      `cache.LogDecorator`, and `cache.ModifiedDecorator` will be accessed by
+      the getter for websites from the config (3).
+    - A `cache.Cache` decorated with `cache.ThreadSafeDecorator`,
+      `cache.LogDecorator`, and `cache.ModifiedDecorator` will be accessed by
+      the getter for the template (4).
+* `Cache`s will be injected into the main `http.HandlerFunc` through a
+  closure (3, 4).
+* Wrap the favicon in the template with an if that only adds the favicon if it
+  isn't empty (7).
+
+## `cache`
+
+![`cache` Design](cache_uml.png)
 
 # v2.1.0 Design
 

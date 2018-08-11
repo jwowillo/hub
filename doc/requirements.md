@@ -1,6 +1,12 @@
-# v2.1.1
+# v3.0.0 Requirements
 
-1. Fix absolute path handling for favicons not at '/'.
+1. Fix absolute path handling for favicons not at '/'
+2. Update text and background colors to match the favicon
+3. Cache the parsed config so that its only reparsed when modified
+4. Change the caching for the template so that its only reparsed when modified
+5. Log whenever cache items are removed
+6. Center containers on the website
+7. Don't show anything for favicon if link doesn't exist
 
 # v2.1.0 Requirements
 

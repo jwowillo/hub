@@ -7,42 +7,55 @@ import (
 	"strconv"
 	"sync"
 	"time"
+
+	"github.com/jwowillo/hub/cache"
 )
 
-// Handler serves nothing.
-func Handler(w http.ResponseWriter, r *http.Request) {
-	ws, err := ReadConfig(Path)
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	var wg sync.WaitGroup
-	wg.Add(len(ws))
-	for i := range ws {
-		x := i
-		go func() {
-			ws[x].Favicon = ReadFavicon(ws[x])
-			wg.Done()
-		}()
-	}
-	wg.Wait()
-	tmpl, err := ReadTmpl("tmpl/index.html")
-	if err != nil {
-		log.Println(err)
-		return
-	}
-	if err := tmpl.Execute(w, ws); err != nil {
-		log.Println(err)
+// Handler returns the main http.HandlerFunc after injecting all dependencies.
+func Handler(fc FaviconCache, wc WebsitesCache, tc TemplateCache,
+	configPath string) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		ws, err := GetWebsites(wc, configPath)
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		var wg sync.WaitGroup
+		wg.Add(len(ws))
+		for i := range ws {
+			x := i
+			go func() {
+				ws[x].Favicon = GetFavicon(fc, ws[x].URL)
+				wg.Done()
+			}()
+		}
+		wg.Wait()
+		tmpl, err := GetTemplate(tc, "tmpl/index.html")
+		if err != nil {
+			log.Println(err)
+			return
+		}
+		if err := tmpl.Execute(w, ws); err != nil {
+			log.Println(err)
+		}
 	}
 }
 
 // main starts server which serves nothing on the set port.
 func main() {
-	Schedule(ClearTmplCache, time.Duration(*cacheDuration))
-	Schedule(ClearFavCache, time.Duration(*cacheDuration))
+	faviconCache := cache.DefaultTimeCache("favicon",
+		time.Duration(*cacheDuration)*time.Hour)
+	configCache := cache.DefaultModifiedCache("config")
+	templateCache := cache.DefaultModifiedCache("template")
+	configPath := "config.yaml"
+
+	handler := Handler(faviconCache, configCache, templateCache, configPath)
+
 	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("static")))
+
+	http.HandleFunc("/", handler)
 	http.Handle("/static/", fs)
-	http.HandleFunc("/", Handler)
+
 	log.Printf("listening on :%d", *port)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(*port), nil))
 }
