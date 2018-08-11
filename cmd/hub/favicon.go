@@ -5,20 +5,15 @@ import (
 	"net/http"
 	"net/url"
 	"strings"
-	"sync"
+
+	"github.com/jwowillo/hub/cache"
 )
 
-// FavCacheMutex is a read/write mutex for updating the favicon cache.
-var FavCacheMutex = sync.RWMutex{}
-
-// FavCache to store favicons.
-var FavCache = NewFaviconCache()
-
-// Favicon for the Website.
+// Favicon for the website at the URL.
 //
-// Does nothing if the Website can't be reached or a favicon can't be found.
-func Favicon(w Website) string {
-	resp, err := http.Get(w.URL)
+// Does nothing if the website can't be reached or a favicon can't be found.
+func Favicon(u string) string {
+	resp, err := http.Get(u)
 	if err != nil {
 		return ""
 	}
@@ -38,36 +33,25 @@ func Favicon(w Website) string {
 	match = matches[0][1]
 	var favicon string
 	if match[0] == '/' {
-		u, err := url.Parse(w.URL)
+		parsed, err := url.Parse(u)
 		if err != nil {
 			return ""
 		}
-		favicon = strings.TrimRight(w.URL, u.Path) + string(match)
+		favicon = strings.TrimRight(u, parsed.Path) + string(match)
 	} else {
 		favicon = string(match)
 	}
 	return favicon
 }
 
-// ReadFavicon using FavCache at key or falling back to making requests to
-// get the favicon if it doesn't exist.
-func ReadFavicon(w Website) string {
-	FavCacheMutex.RLock()
-	cached, exists := FavCache.Get(w)
-	FavCacheMutex.RUnlock()
+// ReadFavicon reads the favicon at the key in the cache.Cache or falls back to
+// making requests to get the favicon if the key doesn't exist.
+func ReadFavicon(c cache.Cache, u string) string {
+	cached, exists := c.Get(u)
 	if !exists {
-		favicon := Favicon(w)
-		FavCacheMutex.Lock()
-		FavCache.Put(w, favicon)
-		FavCacheMutex.Unlock()
+		favicon := Favicon(u)
+		c.Put(u, favicon)
 		cached = favicon
 	}
-	return cached
-}
-
-// ClearFavCache clears FavCache.
-func ClearFavCache() {
-	FavCacheMutex.Lock()
-	defer FavCacheMutex.Unlock()
-	FavCache.Clear()
+	return cached.(string)
 }
