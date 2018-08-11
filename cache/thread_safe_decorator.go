@@ -3,7 +3,7 @@ package cache
 import "sync"
 
 // ThreadSafeDecorator is a Decorator which makes all Cache operations
-// thread-safe..
+// thread-safe.
 //
 // The Decorator assumes that Get doesn't call any Cache functions that modify
 // the Cache. You can decorate this with Decorators who's Get modifies the

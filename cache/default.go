@@ -7,6 +7,29 @@ import (
 	"time"
 )
 
+// DefaultTimeCache returns a thread-safe Cache that logs to STDOUT with prefix
+// name and clears itself every time.Duration.
+func DefaultTimeCache(name string, duration time.Duration) Cache {
+	return Compose(
+		NewThreadSafeDecoratorFactory(DefaultLockers()),
+		NewLogDecoratorFactory(DefaultWriter(), name),
+		NewTimeDecoratorFactory(DefaultTimeSource(), duration),
+	)(NewMemoryCache())
+}
+
+// DefaultModifiedCache returns a thread-safe cache that logs to STDOUT with
+// prefix name and assumes keys refer to files who are cleared whenever the
+// files are modified.
+func DefaultModifiedCache(name string) Cache {
+	return Compose(
+		NewThreadSafeDecoratorFactory(DefaultLockers()),
+		NewLogDecoratorFactory(DefaultWriter(), name),
+		NewModifiedDecoratorFactory(
+			DefaultTimeSource(),
+			DefaultHasBeenModified()),
+	)(NewMemoryCache())
+}
+
 // DefaultWriter returns os.Stdout.
 func DefaultWriter() io.Writer {
 	return os.Stdout
