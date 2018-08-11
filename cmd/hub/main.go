@@ -11,19 +11,11 @@ import (
 	"github.com/jwowillo/hub/cache"
 )
 
-// FaviconCache ...
-type FaviconCache cache.Cache
-
-// ConfigCache ...
-type ConfigCache cache.Cache
-
-// TemplateCache ...
-type TemplateCache cache.Cache
-
-// Handler returns the main http.HandlerFunc.
-func Handler(fc FaviconCache, ConfigCache, tc TemplateCache) http.HandlerFunc {
+// Handler returns the main http.HandlerFunc after injecting all dependencies.
+func Handler(fc FaviconCache, wc WebsitesCache, tc TemplateCache,
+	configPath string) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		ws, err := ReadConfig(Path)
+		ws, err := GetWebsites(wc, configPath)
 		if err != nil {
 			log.Println(err)
 			return
@@ -33,12 +25,12 @@ func Handler(fc FaviconCache, ConfigCache, tc TemplateCache) http.HandlerFunc {
 		for i := range ws {
 			x := i
 			go func() {
-				ws[x].Favicon = ReadFavicon(fc, ws[x].URL)
+				ws[x].Favicon = GetFavicon(fc, ws[x].URL)
 				wg.Done()
 			}()
 		}
 		wg.Wait()
-		tmpl, err := ReadTmpl(tc, "tmpl/index.html")
+		tmpl, err := GetTemplate(tc, "tmpl/index.html")
 		if err != nil {
 			log.Println(err)
 			return
@@ -49,15 +41,20 @@ func Handler(fc FaviconCache, ConfigCache, tc TemplateCache) http.HandlerFunc {
 	}
 }
 
+// Path to config.
+const Path = "config.yaml"
+
 // main starts server which serves nothing on the set port.
 func main() {
 	faviconCache := cache.DefaultTimeCache("favicon",
 		time.Duration(*cacheDuration)*time.Hour)
 	configCache := cache.DefaultModifiedCache("config")
 	templateCache := cache.DefaultModifiedCache("template")
-	http.HandleFunc("/", Handler(faviconCache, configCache, templateCache))
+	handler := Handler(faviconCache, configCache, templateCache, Path)
 
 	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("static")))
+
+	http.HandleFunc("/", handler)
 	http.Handle("/static/", fs)
 
 	log.Printf("listening on :%d", *port)

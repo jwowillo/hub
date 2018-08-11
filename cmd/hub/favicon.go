@@ -4,15 +4,25 @@ import (
 	"io/ioutil"
 	"net/http"
 	"net/url"
+	"regexp"
 	"strings"
 
 	"github.com/jwowillo/hub/cache"
 )
 
+// FaviconCache stores favicons.
+type FaviconCache cache.Cache
+
+// GetFavicon from the FaviconCache or get a new one with Favicon if necessary.
+func GetFavicon(c FaviconCache, u string) string {
+	return cache.Get(c, u, Favicon).(string)
+}
+
 // Favicon for the website at the URL.
 //
-// Does nothing if the website can't be reached or a favicon can't be found.
-func Favicon(u string) string {
+// Returns the empty string if the website can't be reached or a favicon can't
+// be found.
+func Favicon(u string) interface{} {
 	resp, err := http.Get(u)
 	if err != nil {
 		return ""
@@ -22,11 +32,11 @@ func Favicon(u string) string {
 	if err != nil {
 		return ""
 	}
-	match := WebsiteRegex.Find(bs)
+	match := websiteRegex.Find(bs)
 	if match == nil {
 		return ""
 	}
-	matches := URLRegex.FindAllSubmatch(match, 1)
+	matches := urlRegex.FindAllSubmatch(match, 1)
 	if len(matches) == 0 {
 		return ""
 	}
@@ -44,14 +54,8 @@ func Favicon(u string) string {
 	return favicon
 }
 
-// ReadFavicon reads the favicon at the key in the cache.Cache or falls back to
-// making requests to get the favicon if the key doesn't exist.
-func ReadFavicon(c cache.Cache, u string) string {
-	cached, exists := c.Get(u)
-	if !exists {
-		favicon := Favicon(u)
-		c.Put(u, favicon)
-		cached = favicon
-	}
-	return cached.(string)
-}
+// websiteRegex to match favicons with.
+var websiteRegex = regexp.MustCompile("<.*rel=\".*icon.*\".*>")
+
+// urlRegex matches URLs.
+var urlRegex = regexp.MustCompile("href=\"(.*?)\"")
