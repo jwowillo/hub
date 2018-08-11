@@ -41,16 +41,15 @@ func Handler(fc FaviconCache, wc WebsitesCache, tc TemplateCache,
 	}
 }
 
-// Path to config.
-const Path = "config.yaml"
-
 // main starts server which serves nothing on the set port.
 func main() {
 	faviconCache := cache.DefaultTimeCache("favicon",
 		time.Duration(*cacheDuration)*time.Hour)
 	configCache := cache.DefaultModifiedCache("config")
 	templateCache := cache.DefaultModifiedCache("template")
-	handler := Handler(faviconCache, configCache, templateCache, Path)
+	configPath := "config.yaml"
+
+	handler := Handler(faviconCache, configCache, templateCache, configPath)
 
 	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("static")))
 
