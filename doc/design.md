@@ -1,3 +1,8 @@
+# v4.0.0 Design
+
+* The `hub/cache` package will be replaced with the `cache` package at
+  'github.com/jwowillo/cache' (1).
+
 # v3.0.0 Design
 
 * The URL will be parsed and the path will be stripped of before appending
@@ -22,10 +27,6 @@
   closure (3, 4).
 * Wrap the favicon in the template with an if that only adds the favicon if it
   isn't empty (7).
-
-## `cache`
-
-![`cache` Design](cache_uml.png)
 
 # v2.1.0 Design
 
