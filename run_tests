@@ -1,5 +1,0 @@
-#!/usr/bin/env bash
-
-# run_tests and show coverage.
-
-cd cache && go test --cover

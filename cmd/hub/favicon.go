@@ -7,7 +7,7 @@ import (
 	"regexp"
 	"strings"
 
-	"github.com/jwowillo/hub/cache"
+	"gopkg.in/jwowillo/cache.v1"
 )
 
 // FaviconCache stores favicons.
@@ -15,14 +15,19 @@ type FaviconCache cache.Cache
 
 // GetFavicon from the FaviconCache or get a new one with Favicon if necessary.
 func GetFavicon(c FaviconCache, u string) string {
-	return cache.Get(c, u, Favicon).(string)
+	return cache.Get(c, cache.Key(u), FaviconFallback).(string)
+}
+
+// FaviconFallback adapts Favicon to a cache.Fallback.
+func FaviconFallback(k cache.Key) cache.Value {
+	return Favicon(string(k))
 }
 
 // Favicon for the website at the URL.
 //
 // Returns the empty string if the website can't be reached or a favicon can't
 // be found.
-func Favicon(u string) interface{} {
+func Favicon(u string) string {
 	resp, err := http.Get(u)
 	if err != nil {
 		return ""
