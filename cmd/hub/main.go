@@ -8,7 +8,7 @@ import (
 	"sync"
 	"time"
 
-	"github.com/jwowillo/hub/cache"
+	"gopkg.in/jwowillo/cache.v1"
 )
 
 // Handler returns the main http.HandlerFunc after injecting all dependencies.
