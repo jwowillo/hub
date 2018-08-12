@@ -1,3 +1,7 @@
+# v4.0.0 Requirements
+
+1. Make `cache.DefaultTimeCache` and `cache.DefaultModifiedCache` thread-safe
+
 # v3.0.0 Requirements
 
 1. Fix absolute path handling for favicons not at '/'
