@@ -1,3 +1,7 @@
+# v5.0.0 Requirements
+
+1. Use cache v2.0.0.
+
 # v4.0.0 Requirements
 
 1. Make `cache.DefaultTimeCache` and `cache.DefaultModifiedCache` thread-safe
