@@ -1,3 +1,9 @@
+# v5.0.0 Design
+
+* Getters for each of templates, websites, and favicons wll be wrapped in a
+  `cache.FallbackGetter`, adapted back to their specific types, and injected
+  into the main handler (1).
+
 # v4.0.0 Design
 
 * The `hub/cache` package will be replaced with the `cache` package at
