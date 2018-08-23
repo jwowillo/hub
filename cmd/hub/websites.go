@@ -4,31 +4,42 @@ import (
 	"errors"
 	"io/ioutil"
 
-	"gopkg.in/jwowillo/cache.v1"
+	"gopkg.in/jwowillo/cache.v2"
+	"gopkg.in/jwowillo/cache.v2/standard"
 
 	"gopkg.in/yaml.v2"
 )
 
-// WebsitesCache stores parsed Websites.
-type WebsitesCache cache.Cache
+// WebsitesGetter gets a list of Websites from a config file.
+type WebsitesGetter func(string) ([]Website, error)
 
-// GetWebsites from the WebsitesCache or get new ones with Websites if
-// necessary.
-func GetWebsites(c WebsitesCache, path string) ([]Website, error) {
-	ws := cache.Get(c, cache.Key(path), WebsitesFallback)
-	if ws == nil {
-		return nil, errors.New("couldn't parse websites")
-	}
-	return ws.([]Website), nil
+// MakeWebsitesGetter creates the WebsitesGetter.
+func MakeWebsitesGetter() WebsitesGetter {
+	return MakeWebsitesGetterFromGetter(cache.NewFallbackGetter(
+		standard.ChangedCache("websites"),
+		MakeGetterFromWebsitesGetter(Websites)))
 }
 
-// WebsitesFallback adapts Websites to a cache.Fallback.
-func WebsitesFallback(k cache.Key) cache.Value {
-	ws, err := Websites(string(k))
-	if err != nil {
-		return nil
+// MakeWebsitesGetterFromGetter adapts a cache.Getter to a WebsitesGetter.
+func MakeWebsitesGetterFromGetter(g cache.Getter) WebsitesGetter {
+	return func(p string) ([]Website, error) {
+		x := g.Get(cache.Key(p))
+		if x == nil {
+			return nil, errors.New("couldn't parse websites")
+		}
+		return x.([]Website), nil
 	}
-	return ws
+}
+
+// MakeGetterFromWebsitesGetter adapts a WebsitesGetter to a cache.Getter.
+func MakeGetterFromWebsitesGetter(wg WebsitesGetter) cache.Getter {
+	return cache.GetterFunc(func(k cache.Key) cache.Value {
+		ws, err := wg(string(k))
+		if err != nil {
+			return nil
+		}
+		return ws
+	})
 }
 
 // Website in directory.

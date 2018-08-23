@@ -4,7 +4,7 @@
 
 ## Install
 
-`go get github.com/jwowillo/hub/cmd/hub`
+`go get gopkg.in/jwowillo/hub.v5`
 
 ## Run `hub`
 
