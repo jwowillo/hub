@@ -4,29 +4,40 @@ import (
 	"errors"
 	"html/template"
 
-	"gopkg.in/jwowillo/cache.v1"
+	"gopkg.in/jwowillo/cache.v2"
+	"gopkg.in/jwowillo/cache.v2/standard"
 )
 
-// TemplateCache stores parsed template.Templates.
-type TemplateCache cache.Cache
+// TemplateGetter gets a template.Template at a path.
+type TemplateGetter func(string) (*template.Template, error)
 
-// GetTemplate from the TemplateCache or get a new one with Template if
-// necessary.
-func GetTemplate(c TemplateCache, path string) (*template.Template, error) {
-	tmpl := cache.Get(c, cache.Key(path), TemplateFallback)
-	if tmpl == nil {
-		return nil, errors.New("couldn't parse template")
-	}
-	return tmpl.(*template.Template), nil
+// MakeTemplateGetter creates the TemplateGetter.
+func MakeTemplateGetter() TemplateGetter {
+	return MakeTemplateGetterFromGetter(cache.NewFallbackGetter(
+		standard.ChangedCache("template"),
+		MakeGetterFromTemplateGetter(Template)))
 }
 
-// TemplateFallback adapts Template to a cache.Fallback.
-func TemplateFallback(k cache.Key) cache.Value {
-	t, err := Template(string(k))
-	if err != nil {
-		return nil
+// MakeTemplateGetterFromGetter adapts a cache.Getter to a TemplateGetter.
+func MakeTemplateGetterFromGetter(g cache.Getter) TemplateGetter {
+	return func(p string) (*template.Template, error) {
+		x := g.Get(cache.Key(p))
+		if x == nil {
+			return nil, errors.New("couldn't parse template")
+		}
+		return x.(*template.Template), nil
 	}
-	return t
+}
+
+// MakeGetterFromTemplateGetter adapts a TemplateGetter to a cache.Getter.
+func MakeGetterFromTemplateGetter(tg TemplateGetter) cache.Getter {
+	return cache.GetterFunc(func(k cache.Key) cache.Value {
+		t, err := tg(string(k))
+		if err != nil {
+			return nil
+		}
+		return t
+	})
 }
 
 // Template reads the template.Template at the path.

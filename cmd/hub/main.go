@@ -2,59 +2,22 @@ package main
 
 import (
 	"flag"
+	"fmt"
 	"log"
 	"net/http"
 	"strconv"
-	"sync"
-	"time"
-
-	"gopkg.in/jwowillo/cache.v1"
 )
-
-// Handler returns the main http.HandlerFunc after injecting all dependencies.
-func Handler(fc FaviconCache, wc WebsitesCache, tc TemplateCache,
-	configPath string) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		ws, err := GetWebsites(wc, configPath)
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		var wg sync.WaitGroup
-		wg.Add(len(ws))
-		for i := range ws {
-			x := i
-			go func() {
-				ws[x].Favicon = GetFavicon(fc, ws[x].URL)
-				wg.Done()
-			}()
-		}
-		wg.Wait()
-		tmpl, err := GetTemplate(tc, "tmpl/index.html")
-		if err != nil {
-			log.Println(err)
-			return
-		}
-		if err := tmpl.Execute(w, ws); err != nil {
-			log.Println(err)
-		}
-	}
-}
 
 // main starts server which serves nothing on the set port.
 func main() {
-	faviconCache := cache.DefaultTimeCache("favicon",
-		time.Duration(*cacheDuration)*time.Hour)
-	configCache := cache.DefaultModifiedCache("config")
-	templateCache := cache.DefaultModifiedCache("template")
-	configPath := "config.yaml"
+	const configPath = "config.yaml"
+	const templatePath = "tmpl/index.html"
+	http.Handle("/", MakeHomeHandler(configPath, templatePath))
 
-	handler := Handler(faviconCache, configCache, templateCache, configPath)
-
-	fs := http.StripPrefix("/static/", http.FileServer(http.Dir("static")))
-
-	http.HandleFunc("/", handler)
-	http.Handle("/static/", fs)
+	const staticPath = "static"
+	http.Handle(
+		fmt.Sprintf("/%s/", staticPath),
+		MakeStaticHandler(staticPath))
 
 	log.Printf("listening on :%d", *port)
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(*port), nil))
@@ -72,5 +35,4 @@ var port = flag.Int("port", 8080, "port to listen on")
 var cacheDuration = flag.Int(
 	"cache-duration",
 	24,
-	"hours before clearing cache",
-)
+	"hours before clearing cache")
