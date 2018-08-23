@@ -3,7 +3,7 @@
 # deploy hub to the passed remote host, user, and directory
 
 ssh $2@$1 << EOF
-go get -u github.com/jwowillo/hub/cmd/hub
+go get -u gopkg.in/jwowillo/hub.v5
 sudo pkill hub
 cd $3
 sudo nohup hub --port 80 >/dev/null 2>/dev/null &

@@ -6,21 +6,35 @@ import (
 	"net/url"
 	"regexp"
 	"strings"
+	"time"
 
-	"gopkg.in/jwowillo/cache.v1"
+	"gopkg.in/jwowillo/cache.v2"
+	"gopkg.in/jwowillo/cache.v2/standard"
 )
 
-// FaviconCache stores favicons.
-type FaviconCache cache.Cache
+// FaviconGetter gets a favicon at a URL.
+type FaviconGetter func(string) string
 
-// GetFavicon from the FaviconCache or get a new one with Favicon if necessary.
-func GetFavicon(c FaviconCache, u string) string {
-	return cache.Get(c, cache.Key(u), FaviconFallback).(string)
+// MakeFaviconGetter creates the FaviconGetter.
+func MakeFaviconGetter() FaviconGetter {
+	duration := time.Duration(*cacheDuration) * time.Hour
+	return MakeFaviconGetterFromGetter(cache.NewFallbackGetter(
+		standard.TimeCache("favicon", duration),
+		MakeGetterFromFaviconGetter(Favicon)))
 }
 
-// FaviconFallback adapts Favicon to a cache.Fallback.
-func FaviconFallback(k cache.Key) cache.Value {
-	return Favicon(string(k))
+// MakeFaviconGetterFromGetter adapts a cache.Getter to a FaviconGetter.
+func MakeFaviconGetterFromGetter(g cache.Getter) FaviconGetter {
+	return func(u string) string {
+		return g.Get(cache.Key(u)).(string)
+	}
+}
+
+// MakeGetterFromFaviconGetter adapts a FaviconGetter to a cache.Getter.
+func MakeGetterFromFaviconGetter(fg FaviconGetter) cache.Getter {
+	return cache.GetterFunc(func(k cache.Key) cache.Value {
+		return fg(string(k))
+	})
 }
 
 // Favicon for the website at the URL.
