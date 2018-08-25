@@ -4,8 +4,8 @@ import (
 	"errors"
 	"io/ioutil"
 
-	"gopkg.in/jwowillo/cache.v2"
-	"gopkg.in/jwowillo/cache.v2/standard"
+	"github.com/jwowillo/cache/v2"
+	"github.com/jwowillo/cache/v2/standard"
 
 	"gopkg.in/yaml.v2"
 )

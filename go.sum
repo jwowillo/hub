@@ -1,0 +1,5 @@
+github.com/jwowillo/cache/v2 v2.1.0 h1:d7Hb+t2oBinnTWX+ERA7AnQH+WNEoKHAhta8FqjgCfo=
+github.com/jwowillo/cache/v2 v2.1.0/go.mod h1:mN642bHUd1VlpCvGhPisJIdoDK/g74PteDc3Zkuv2sM=
+gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=
+gopkg.in/yaml.v2 v2.2.1 h1:mUhvW9EsL+naU5Q3cakzfE91YhliOondGd6ZrsDBHQE=
+gopkg.in/yaml.v2 v2.2.1/go.mod h1:hI93XBmqTisBFMUTm0b8Fm+jr3Dg1NNxqwp+5A1VGuI=

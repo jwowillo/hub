@@ -8,8 +8,8 @@ import (
 	"strings"
 	"time"
 
-	"gopkg.in/jwowillo/cache.v2"
-	"gopkg.in/jwowillo/cache.v2/standard"
+	"github.com/jwowillo/cache/v2"
+	"github.com/jwowillo/cache/v2/standard"
 )
 
 // FaviconGetter gets a favicon at a URL.
