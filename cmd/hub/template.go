@@ -4,8 +4,8 @@ import (
 	"errors"
 	"html/template"
 
-	"gopkg.in/jwowillo/cache.v2"
-	"gopkg.in/jwowillo/cache.v2/standard"
+	"github.com/jwowillo/cache/v2"
+	"github.com/jwowillo/cache/v2/standard"
 )
 
 // TemplateGetter gets a template.Template at a path.
