@@ -1,3 +1,7 @@
+# v5.1.0 Design
+
+* Create a module for the version (1).
+
 # v5.0.0 Design
 
 * Getters for each of templates, websites, and favicons wll be wrapped in a
