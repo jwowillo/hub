@@ -1,3 +1,7 @@
+# v5.1.0 Requirements
+
+1. Use Go modules for versioning
+
 # v5.0.0 Requirements
 
 1. Use cache v2.0.0
