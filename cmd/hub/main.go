@@ -8,7 +8,7 @@ import (
 	"strconv"
 )
 
-// main starts server which serves nothing on the set port.
+// main starts the server.
 func main() {
 	const configPath = "config.yaml"
 	const templatePath = "tmpl/index.html"
@@ -23,7 +23,7 @@ func main() {
 	log.Fatal(http.ListenAndServe(":"+strconv.Itoa(*port), nil))
 }
 
-// init reads the optional port flag.
+// init parses flags.
 func init() {
 	flag.Parse()
 }

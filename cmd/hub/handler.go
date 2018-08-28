@@ -7,7 +7,7 @@ import (
 	"sync"
 )
 
-// MakeHomeHandler makes the home page http.Handler.
+// MakeHomeHandler makes the home-page http.Handler.
 func MakeHomeHandler(configPath, templatePath string) http.Handler {
 	return http.HandlerFunc(Handler(
 		MakeFaviconGetter(), MakeWebsitesGetter(), MakeTemplateGetter(),
